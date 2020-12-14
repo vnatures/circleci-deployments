@@ -1,0 +1,19 @@
+description: >
+  Temporary Ava test suite runner. TBD: move it as parameterized enum value option in test.yml
+
+steps:
+  - setup_remote_docker
+  - checkout
+  - attach_workspace:
+      at: ~/project
+  - run: node --version
+  - run: docker --version
+  - run: env
+  - run: docker pull appropriate/curl
+  - run: mkdir -p _out/unit _out/e2e
+  - run: npm test --  --timeout=5m --tap --no-color| npx tap-xunit > _out/unit/test.xml
+  - run: npm run test:e2e --  --timeout=10m --tap --no-color| npx tap-xunit > _out/e2e/test.xml
+  - store_test_results:
+      path: _out
+  - store_artifacts:
+      path: _out

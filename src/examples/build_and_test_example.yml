@@ -1,0 +1,18 @@
+# Simple example for fulle deployment using the orb and the default contexts.
+description: Simple build and test example
+
+usage:
+  version: 2.1
+  orbs:
+    versatile: versatile/circleci-deployments@1.0.0
+  workflows:
+workflows:
+  build-and-test:
+    jobs:
+      - versatile/build:
+          context: base-context
+      - versatile/test:
+          test-suite: ava
+          context: base-context
+          requires:
+            - build
