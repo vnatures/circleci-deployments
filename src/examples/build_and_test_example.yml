@@ -12,7 +12,7 @@ workflows:
       - versatile/build:
           context: base-context
       - versatile/test:
-          test-suite: ava
+          test-suite: jest
           context: base-context
           requires:
             - build
