@@ -1,5 +1,6 @@
 description: >
   This is a test variant based on node 12, comes with postgres db ${AWS_RESOURCE_NAME_PREFIX}-test with the user postgres.
+
 docker:
   - image: cimg/node:12.18
   - image: circleci/postgres:9.6.2-alpine

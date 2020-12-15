@@ -1,5 +1,5 @@
 # Simple example for fulle deployment using the orb and the default contexts.
-description: > 
+description: >
   Example of a full NodeJS (Typescript) + PostgresSQL DB sequelize migration deployment including task-definition updates (based on premade AWS resource, terraform not yet implemented).
 
 usage:
@@ -66,7 +66,7 @@ workflows:
             - production
           requires:
             - versatile/build
-       - versatile/run-migrations:
+      - versatile/run-migrations:
           context:
             - base-context
             - production

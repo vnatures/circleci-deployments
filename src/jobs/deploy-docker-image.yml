@@ -26,8 +26,10 @@ steps:
       cluster-name: '$<< parameters.cluster-name >>'
       family: '$<< parameters.resource-name >>-$<< parameters.node-env >>'
       service-name: '$<< parameters.resource-name >>'
-      container-image-name-updates: 'container=$<< parameters.resource-name >>,image-and-tag=${AWS_ECR_ACCOUNT_URL}/$<< parameters.resource-name >>:${CIRCLE_SHA1}'
-      container-env-var-updates: container=$<< parameters.resource-name >>,name=NODE_ENV,value=$<< parameters.node-env >>
+      container-image-name-updates: >
+        'container=$<< parameters.resource-name >>,image-and-tag=${AWS_ECR_ACCOUNT_URL}/$<< parameters.resource-name >>:${CIRCLE_SHA1}'
+      container-env-var-updates: >
+        container=$<< parameters.resource-name >>,name=NODE_ENV,value=$<< parameters.node-env >>
       verify-revision-is-deployed: true
   - slack/notify:
       event: pass

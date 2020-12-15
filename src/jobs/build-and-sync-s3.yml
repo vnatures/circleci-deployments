@@ -34,5 +34,5 @@ steps:
         --acl public-read \
         --cache-control "max-age=86400"
   - aws-cloudfront/invalidate:
-        distribution_id: '$<<parameters.aws-dist-id-env >>'
-        paths: "/index.html"
+      distribution_id: '$<< parameters.aws-dist-id-env >>'
+      paths: "/index.html"
