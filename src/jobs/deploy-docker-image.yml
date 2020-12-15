@@ -1,9 +1,6 @@
 description: >
   Updates the service in one cluster to the new built docker image.
-  By using the previous valid task-definition in AWS and changing the ecr image url according to the CIRCLE_SHA1 on the env. 
-
-
-  slack-secrets context that contains... 
+  By using the previous valid task-definition in AWS and changing the ecr image url according to the CIRCLE_SHA1 on the env.
 
 executor: aws-cli/default
 
