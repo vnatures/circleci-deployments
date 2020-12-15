@@ -22,8 +22,8 @@ steps:
       workspace-root: << parameters.workspace-root >>
       create-repo: true
       extra-build-args: >-
-        --build-arg NPM_TOKEN=$<< parameters.npm-token-env >>
+        --build-arg NPM_TOKEN=<< parameters.npm-token-env >>
         --build-arg COMMIT_HASH=${CIRCLE_SHA1}
       account-url: AWS_ECR_ACCOUNT_URL
-      repo: '$<< parameters.repo-name >>'
+      repo: << parameters.repo-name >>
       tag: '${CIRCLE_SHA1}'

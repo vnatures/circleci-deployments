@@ -21,13 +21,13 @@ steps:
   - aws-cli/install
   - aws-cli/setup
   - aws-ecs/update-service:
-      cluster-name: '$<< parameters.cluster-name >>'
-      family: '$<< parameters.resource-name >>-$<< parameters.node-env >>'
-      service-name: '$<< parameters.resource-name >>'
+      cluster-name: '<< parameters.cluster-name >>'
+      family: '<< parameters.resource-name >>-<< parameters.node-env >>'
+      service-name: '<< parameters.resource-name >>'
       container-image-name-updates: >
-        'container=$<< parameters.resource-name >>,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/$<< parameters.resource-name >>:${CIRCLE_SHA1}'
+        'container=$<< parameters.resource-name >>,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/<< parameters.resource-name >>:${CIRCLE_SHA1}'
       container-env-var-updates: >
-        container=$<< parameters.resource-name >>,name=NODE_ENV,value=$<< parameters.node-env >>
+        container=<< parameters.resource-name >>,name=NODE_ENV,value=<< parameters.node-env >>
       verify-revision-is-deployed: true
   - slack/notify:
       event: pass
