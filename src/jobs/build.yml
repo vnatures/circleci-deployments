@@ -1,0 +1,33 @@
+description: >
+  Builds the app using the `npm build` command and persisting the workspace (root: ~/project).
+  contains the next files:
+  - build
+  - dist
+  - config
+  - Dockerfile
+  - package.json
+  - package-lock.json
+  - .npmrc
+  - env.js (DEPRECATED)
+  - node_modules
+
+steps:
+  - checkout
+  - run: env
+  - run:
+      command: 'npm ci'
+      name: 'Install Dependencies'
+  - run:
+      command: 'npm run build'
+      name: 'Build app'
+  - persist_to_workspace:
+      root: ~/project
+      paths:
+        - build
+        - config
+        - Dockerfile
+        - package.json
+        - package-lock.json
+        - .npmrc
+        - env.js
+        - node_modules

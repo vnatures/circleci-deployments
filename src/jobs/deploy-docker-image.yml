@@ -1,0 +1,37 @@
+description: >
+  Updates the service in one cluster to the new built docker image.
+  By using the previous valid task-definition in AWS and changing the ecr image url according to the CIRCLE_SHA1 on the env. AWS_ECR_ACCOUNT_URL env var is required (${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com) to perform this job.
+  Conventions:
+  * resource-name should be the name of the following resources: service-name, container-name and the task-definition name prefix.
+  * task-defintion usually named: `{resource-name}-{staging/production}`.
+
+executor: aws-cli/default
+
+parameters:
+  cluster-name:
+    type: env_var_name
+    default: ECS_CLUSTER_NAME
+  node-env:
+    type: env_var_name
+    default: NODE_ENV
+  resource-name:
+    type: env_var_name
+    default: AWS_RESOURCE_NAME_PREFIX
+
+
+steps:
+  - aws-cli/install
+  - aws-cli/setup
+  - aws-ecs/update-service:
+      cluster-name: '$<< parameters.cluster-name >>'
+      family: '$<< parameters.resource-name >>-$<< parameters.node-env >>'
+      service-name: '$<< parameters.resource-name >>'
+      container-image-name-updates: 'container=$<< parameters.resource-name >>,image-and-tag=${AWS_ECR_ACCOUNT_URL}/$<< parameters.resource-name >>:${CIRCLE_SHA1}'
+      container-env-var-updates: container=$<< parameters.resource-name >>,name=NODE_ENV,value=$<< parameters.node-env >>
+      verify-revision-is-deployed: true
+  - slack/notify:
+      event: pass
+      template: success_tagged_deploy_1
+  - slack/notify:
+      event: fail
+      template: base_fail_1

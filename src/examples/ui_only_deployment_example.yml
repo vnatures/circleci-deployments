@@ -1,0 +1,20 @@
+description: >
+  Running this job we'll build NodeJS Frontend applications using the `npm build` command and then deploy it to the requested bucket invalidating the `/index.html` file.
+  - base-context should contain the next env variables
+
+# Provide a use-case based example for using this orb.
+# Everything in the `usage` section will be displayed in the orb registry.
+# Comments are not retained.
+usage:
+  version: 2.1
+  orbs:
+    versatile: versatile/circleci-deployments@1.0.0
+  workflows:
+    build-and-test:
+      jobs:
+        - build-and-test
+    deploy:
+      jobs:
+        - versatile/build-and-sync-to-s3:
+            context:
+              - base-context

@@ -1,15 +1,22 @@
 version: 2.1
 
 description: >
-  Sample orb description
+  This orb encapsulate the scripts for AWS deployment.
+  It contains the scripts to push docker builds to ECR, Update ECS service task-definition,
+  Run sequelize migration, notify slack channel, test for ava/jest and build Typescript Application for both production and staging environments.
 # What will your orb allow users to accomplish?
 # Descriptions should be short, simple, and informative.
 
 # This information will be displayed in the orb registry and is not mandatory.
 display:
   home_url: "https://www.website.com/docs"
-  source_url: "https://www.github.com/EXAMPLE_ORG/EXAMPLE_PROJECT"
+  source_url: "https://www.github.com/vnatures/circleci-deployments"
 
 # If your orb requires other orbs, you can import them like this. Otherwise remove the "orbs" stanza.
-# orbs:
-#  hello: circleci/hello-build@0.0.5
+orbs:
+  node: circleci/node@1.1.6
+  aws-cli: circleci/aws-cli@1.3.1
+  aws-ecr: circleci/aws-ecr@6.14.0
+  aws-ecs: circleci/aws-ecs@1.4.0
+  slack: circleci/slack@4.1.3
+  aws-cloudfront: topmonks/aws-cloudfront@1.0.0
