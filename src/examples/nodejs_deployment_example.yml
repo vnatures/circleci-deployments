@@ -1,93 +1,124 @@
-# Simple example for fulle deployment using the orb and the default contexts.
 description: >
-  Example of a full NodeJS (Typescript) + PostgresSQL DB sequelize migration deployment including task-definition updates (based on premade AWS resource, terraform not yet implemented).
+  Example of a full NodeJS (Typescript) + PostgresSQL DB sequelize migration deployment.
+  Based on premade AWS resources.
 
 usage:
   version: 2.1
   orbs:
     versatile: versatile/circleci-deployments@1.0.0
-  workflows:
-workflows:
-  build-and-test:
-    jobs:
-      - versatile/build:
-          context: base-context
-      - versatile/test:
-          test-suite: jest
-          context: base-context
-          requires:
+
+  jobs:
+  build:
+    executor: versatile/default
+    steps:
+      - checkout
+      - run: env
+      - run:
+          command: 'npm ci'
+          name: 'Install Dependencies'
+      - run:
+          command: 'npm run build'
+          name: 'Build app'
+      - persist_to_workspace:
+          root: ~/project
+          paths:
             - build
-  deploy-staging:
-    when:
-      not:
-        - equal: [ master, << pipeline.git.branch >> ]
-    jobs:
-      - versatile/build:
-          context: base-context
-      - versatile/push-docker-image:
-          context:
-            - base-context
-            - staging
-          requires:
-            - versatile/build
-      - slack/on-hold:
-          context: slack-secrets
-          requires:
-            - versatile/push-docker-image
-      - approve-deploy:
-          type: approval
-          release-timeout: 600
-          requires:
-            - slack/on-hold
-            - versatile/push-docker-image
-      - versatile/run-migrations:
-          context:
-            - base-context
-            - staging
-          requires:
-            - approve-deploy
-      - versatile/deploy-docker-image:
-          name: deploy-docker-image-staging
-          requires:
-            - versatile/run-migrations
-          context:
-            - base-context
-            - staging
-            - slack-secrets
-  deploy-production:
-    when:
-      equal: [ master, << pipeline.git.branch >> ]
-    jobs:
-      - versatile/build:
-          context: base-context
-      - versatile/push-docker-image:
-          context:
-            - base-context
-            - production
-          requires:
-            - versatile/build
-      - versatile/run-migrations:
-          context:
-            - base-context
-            - production
-          requires:
-            - versatile/push-docker-image
-      - versatile/deploy-docker-image:
-          name: deploy-docker-image-production-spot
-          cluster-name: '${ECS_SPOT_CLUSTER_NAME}'
-          requires:
-            - versatile/push-docker-image
-          context:
-            - base-context
-            - production
-            - slack-secrets
-      - versatile/deploy-docker-image:
-          name: deploy-docker-image-production-on-demand
-          cluster-name: '${ECS_ON_DEMAND_CLUSTER_NAME}'
-          requires:
-            - run-migrations
-            - deploy-docker-image-production-spot
-          context:
-            - base-context
-            - production
-            - slack-secrets
+            - config
+            - Dockerfile
+            - package.json
+            - package-lock.json
+            - .npmrc
+            - env.js
+            - node_modules
+
+  run-migrations:
+    executor: versatile/default
+    steps:
+      - checkout
+      - aws-cli/install
+      - aws-cli/setup
+      - attach_workspace:
+          at: ~/project
+      - run: env
+      - run: node env.js
+      - run:
+          command: 'npm run db:prepare'
+          name: 'Running DB Migrations'
+
+  workflows:
+    deploy-staging:
+      when:
+        not:
+          - equal: [ master, << pipeline.git.branch >> ]
+      jobs:
+        - build:
+            context: base-context
+        - versatile/push-docker-image:
+            workspace-root: ~/project
+            context:
+              - base-context
+              - staging
+            requires:
+              - build
+        - slack/on-hold:
+            context: slack-secrets
+            requires:
+              - versatile/push-docker-image
+        - approve-deploy:
+            type: approval
+            release-timeout: 600
+            requires:
+              - slack/on-hold
+              - versatile/push-docker-image
+        - run-migrations:
+            context:
+              - base-context
+              - staging
+            requires:
+              - approve-deploy
+        - versatile/deploy-docker-image:
+            name: deploy-docker-image-staging
+            requires:
+              - run-migrations
+            context:
+              - base-context
+              - staging
+              - slack-secrets
+    deploy-production:
+      when:
+        equal: [ master, << pipeline.git.branch >> ]
+      jobs:
+        - build:
+            context: base-context
+        - versatile/push-docker-image:
+            workspace-root: ~/project
+            context:
+              - base-context
+              - production
+            requires:
+              - build
+        - run-migrations:
+            context:
+              - base-context
+              - production
+            requires:
+              - versatile/push-docker-image
+        - versatile/deploy-docker-image:
+            name: deploy-docker-image-production-spot
+            cluster-name: '${ECS_SPOT_CLUSTER_NAME}'
+            requires:
+              - run-migrations
+            context:
+              - base-context
+              - production
+              - slack-secrets
+        - versatile/deploy-docker-image:
+            name: deploy-docker-image-production-on-demand
+            cluster-name: '${ECS_ON_DEMAND_CLUSTER_NAME}'
+            requires:
+              - run-migrations
+              - deploy-docker-image-production-spot
+            context:
+              - base-context
+              - production
+              - slack-secrets

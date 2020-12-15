@@ -9,12 +9,37 @@ usage:
   version: 2.1
   orbs:
     versatile: versatile/circleci-deployments@1.0.0
+  jobs:
+    build:
+      docker:
+        - image: circleci/node:12.18.4-browsers
+      steps:
+        - checkout
+        - run:
+          name: "Setup Environment"
+          command: |
+            mkdir -p ~/reports
+            node --version
+            npm --version
+            env
+        - node/install-packages
+        - run: cp ./envs/$NODE_ENV.env .env
+        - run: npm run build
+        - persist_to_workspace:
+          root: ~/project
+          paths:
+            - build
   workflows:
-    build-and-test:
+    build:
       jobs:
-        - build-and-test
+        - build
     deploy:
       jobs:
-        - versatile/build-and-sync-to-s3:
+        - versatile/invalidate-and-sync-s3:
+            workspace-root: ~/project
+            build-path: build
+            node-env: staging # refered from NODE_ENV if not provided.
+            bucket-name: '${APP_NAME}-${NODE_ENV}.example.com'
             context:
               - base-context
+              - staging

@@ -5,30 +5,27 @@ docker:
 
 parameters:
   node-env:
-    type: env_var_name
-    default: NODE_ENV
-  aws-dist-id-env:
-    type: env_var_name
-    default: AWS_DIST_ID
+    type: string
+    default: '${NODE_ENV}'
   bucket-name:
     type: string
     default: ''
+  workspace-root:
+    type: string
+    description: local files you want to pass from the build stage
+  build-path:
+    type: string
+    default: build
+  aws-dist-id-env:
+    type: env_var_name
+    default: AWS_DIST_ID
 
 steps:
   - checkout
-  - run:
-      name: "Setup Environment"
-      command: |
-        mkdir -p ~/reports
-        node --version
-        npm --version
-        env
-  - node/install-packages
-  - run:
-    name: "Build Application"
-    command: npm run build
+  - attach_workspace:
+      at: << paramters.workspace-root >>
   - aws-s3/sync:
-      from: build
+      from: "<< paramters.build-path >>"
       to: "s3://$<< parameters.bucket-name >>"
       arguments: |
         --acl public-read \
