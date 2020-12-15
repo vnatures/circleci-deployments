@@ -14,10 +14,13 @@ steps:
   - checkout
   - attach_workspace:
       at: ~/project
-  - run: mkdir -p ~/reports
-  - run: node --version
-  - run: npm --version
-  - run: env
+  - run:
+      name: "Setup Environment"
+      command: |
+        mkdir -p ~/reports
+        node --version
+        npm --version
+        env
   - run:
       name: Install JUnit coverage reporter
       command: npm install --no-save --dev jest-junit
