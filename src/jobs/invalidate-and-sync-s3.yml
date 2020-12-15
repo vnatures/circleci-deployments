@@ -23,9 +23,9 @@ parameters:
 steps:
   - checkout
   - attach_workspace:
-      at: << paramters.workspace-root >>
+      at: << parameters.workspace-root >>
   - aws-s3/sync:
-      from: "<< paramters.build-path >>"
+      from: "<< parameters.build-path >>"
       to: "s3://$<< parameters.bucket-name >>"
       arguments: |
         --acl public-read \

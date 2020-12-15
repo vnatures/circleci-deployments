@@ -47,12 +47,13 @@ usage:
 
   workflows:
     deploy-staging:
-      when:
-        not:
-          - equal: [ master, << pipeline.git.branch >> ]
       jobs:
         - build:
             context: base-context
+            filters:
+              branches:
+                ignore:
+                  - master
         - versatile/push-docker-image:
             workspace-root: ~/project
             context:
@@ -85,11 +86,13 @@ usage:
               - staging
               - slack-secrets
     deploy-production:
-      when:
-        equal: [ master, << pipeline.git.branch >> ]
       jobs:
         - build:
             context: base-context
+            filters:
+              branches:
+                only:
+                  - master
         - versatile/push-docker-image:
             workspace-root: ~/project
             context:

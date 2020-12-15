@@ -16,25 +16,23 @@ usage:
       steps:
         - checkout
         - run:
-          name: "Setup Environment"
-          command: |
-            mkdir -p ~/reports
-            node --version
-            npm --version
-            env
+            name: "Setup Environment"
+            command: |
+              mkdir -p ~/reports
+              node --version
+              npm --version
+              env
         - node/install-packages
         - run: cp ./envs/$NODE_ENV.env .env
         - run: npm run build
         - persist_to_workspace:
-          root: ~/project
-          paths:
-            - build
+            root: ~/project
+            paths:
+              - build
   workflows:
-    build:
+    build-and-deploy:
       jobs:
         - build
-    deploy:
-      jobs:
         - versatile/invalidate-and-sync-s3:
             workspace-root: ~/project
             build-path: build

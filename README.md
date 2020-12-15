@@ -7,7 +7,6 @@
 
 See the [orb registry listing](https://circleci.com/orbs/registry/orb/versatile/circleci-deployments) for usage guidelines.
 
-# NodeJS (Typescript) Service Example
 
 ## Prerequisites:
 
@@ -34,7 +33,6 @@ SLACK
 | `SLACK_DEFAULT_CHANNEL`        | The channel used to send notification by the bot          |
 
 
-> Optional: add environment specific variables in contexts such as NODE_ENV, ECS_CLUSTER_NAME
 
 #### We've organize them in CircleCI contexts:
 
@@ -43,8 +41,14 @@ Organization level:
 * staging/production: [NODE_ENV, ECS_CLUSTER_NAME]
 * slack-secrets: [NODE_ENV, ECS_CLUSTER_NAME]
 
+> Optional: add environment specific variables in contexts such as NODE_ENV, ECS_CLUSTER_NAME
+
 Project level:
 * APP_NAME: the service name (the git repo name or agreed upon name)
+
+
+
+# NodeJS (Typescript) Service Example
 
 ```yaml
 version: 2.1
@@ -79,8 +83,6 @@ jobs:
     executor: versatile/default
     steps:
       - checkout
-      - aws-cli/install
-      - aws-cli/setup
       - attach_workspace:
           at: ~/project
       - run: env
@@ -91,12 +93,13 @@ jobs:
 
 workflows:
   deploy-staging:
-    when:
-      not:
-        - equal: [ master, << pipeline.git.branch >> ]
     jobs:
       - build:
           context: base-context
+          filters:
+            branches:
+              ignore:
+                - master
       - versatile/push-docker-image:
           workspace-root: ~/project
           context:
@@ -129,11 +132,13 @@ workflows:
             - staging
             - slack-secrets
   deploy-production:
-    when:
-      equal: [ master, << pipeline.git.branch >> ]
     jobs:
       - build:
           context: base-context
+          filters:
+            branches:
+              only:
+                - master
       - versatile/push-docker-image:
           workspace-root: ~/project
           context:
@@ -169,8 +174,10 @@ workflows:
 ```
 
 
+---
 
-### UI only (FED) application bundle deploy (AWS S3 bucket + CloudFront)
+
+# UI only (FED) application bundle deploy (AWS S3 bucket + CloudFront)
 
 For deploying frontend application, additional env var required
 AWS_DIST_ID: cloudfront's distribution id.
@@ -187,26 +194,24 @@ jobs:
     steps:
       - checkout
       - run:
-        name: "Setup Environment"
-        command: |
-          mkdir -p ~/reports
-          node --version
-          npm --version
-          env
+          name: "Setup Environment"
+          command: |
+            mkdir -p ~/reports
+            node --version
+            npm --version
+            env
       - node/install-packages
       - run: cp ./envs/$NODE_ENV.env .env
       - run: npm run build
       - persist_to_workspace:
-        root: ~/project
-        paths:
-          - build
+          root: ~/project
+          paths:
+            - build
 
 workflows:
-  build:
+  build-and-deploy:
     jobs:
       - build
-  deploy:
-    jobs:
       - versatile/invalidate-and-sync-s3:
           workspace-root: ~/project
           build-path: build
