@@ -16,9 +16,10 @@ parameters:
   build-path:
     type: string
     default: build
-  aws-dist-id-env:
-    type: env_var_name
-    default: AWS_DIST_ID
+  aws-dist-id:
+    type: string
+    default: '${AWS_DIST_ID}'
+    description: Cloudfront distribution_id
 
 steps:
   - checkout
@@ -31,5 +32,5 @@ steps:
         --acl public-read \
         --cache-control "max-age=86400"
   - aws-cloudfront/invalidate:
-      distribution_id: '${<< parameters.aws-dist-id-env >>}'
+      distribution_id: << parameters.aws-dist-id >>
       paths: "/index.html"
