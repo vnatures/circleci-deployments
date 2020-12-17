@@ -99,6 +99,7 @@ workflows:
           filters:
             branches:
               ignore:
+                - main
                 - master
       - versatile/push-docker-image:
           workspace-root: ~/project
@@ -138,6 +139,7 @@ workflows:
           filters:
             branches:
               only:
+                - main
                 - master
       - versatile/push-docker-image:
           workspace-root: ~/project
