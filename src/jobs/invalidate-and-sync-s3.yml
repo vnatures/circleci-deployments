@@ -33,4 +33,4 @@ steps:
         --cache-control "max-age=86400"
   - aws-cloudfront/invalidate:
       distribution_id: << parameters.aws-dist-id >>
-      paths: "/index.html"
+      paths: "/*"
