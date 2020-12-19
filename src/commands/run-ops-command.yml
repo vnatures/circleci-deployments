@@ -1,0 +1,17 @@
+description: Run remote scripts repo locally by name
+
+parameters:
+  repo-name:
+    type: string
+  script-path:
+    type: string
+
+steps:
+  run:
+    name: "Clone remote scripts repo"
+    command: git clone << parameters.repo-name >> scripts
+  run:
+    name: "Running bash script"
+    command: |
+      chmod +x ./scripts/<< parameters.script-path >>
+      ./scripts/<< parameters.script-path >>
