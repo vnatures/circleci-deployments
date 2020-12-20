@@ -7,11 +7,12 @@ parameters:
     type: string
 
 steps:
-  run:
-    name: "Clone remote scripts repo"
-    command: git clone << parameters.repo-name >> scripts
-  run:
-    name: "Running bash script"
-    command: |
-      chmod +x ./scripts/<< parameters.script-path >>
-      ./scripts/<< parameters.script-path >>
+  - checkout
+  - run:
+      name: "Clone remote scripts repo"
+      command: git clone << parameters.repo-name >> ../scripts
+  - run:
+      name: "Running bash script"
+      command: |
+        chmod +x ../scripts/<< parameters.script-path >>
+        ../scripts/<< parameters.script-path >>
