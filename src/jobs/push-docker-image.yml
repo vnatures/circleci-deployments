@@ -6,10 +6,10 @@ executor: aws-ecr/default
 parameters:
   repo-name:
     type: string
-    default: ${APP_NAME}
+    default: "${APP_NAME}"
   npm-token-env:
     type: string
-    default: ${NPM_TOKEN}
+    default: "${NPM_TOKEN}"
   workspace-root:
     type: string
     description: Local files you want to pass from the build stage
