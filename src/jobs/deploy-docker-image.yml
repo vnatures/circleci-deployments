@@ -7,13 +7,13 @@ executor: aws-cli/default
 parameters:
   cluster-name:
     type: string
-    default: '${ECS_CLUSTER_NAME}'
+    default: ${ECS_CLUSTER_NAME}
   node-env:
     type: string
-    default: '${NODE_ENV}'
+    default: ${NODE_ENV}
   resource-name:
     type: string
-    default: '${APP_NAME}'
+    default: ${APP_NAME}
     description: >
       Defines the next resources: service-name in the cluster, container-name, ecr repo-name and the task-definition name prefix. task-defintion usually named: `{resource-name}-{staging/production}`
 
@@ -21,9 +21,9 @@ steps:
   - aws-cli/install
   - aws-cli/setup
   - aws-ecs/update-service:
-      cluster-name: '<< parameters.cluster-name >>'
+      cluster-name: << parameters.cluster-name >>
       family: '<< parameters.resource-name >>-<< parameters.node-env >>'
-      service-name: '<< parameters.resource-name >>'
+      service-name: << parameters.resource-name >>
       container-image-name-updates: >
         'container=$<< parameters.resource-name >>,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/<< parameters.resource-name >>:${CIRCLE_SHA1}'
       container-env-var-updates: >
