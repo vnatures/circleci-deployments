@@ -9,7 +9,7 @@ parameters:
     default: '${APP_NAME}'
   npm-token-env:
     type: string
-    default: '${NODE_ENV}'
+    default: '${NPM_TOKEN}'
   workspace-root:
     type: string
     description: Local files you want to pass from the build stage
@@ -24,6 +24,7 @@ steps:
       extra-build-args: >-
         --build-arg NPM_TOKEN=<< parameters.npm-token-env >>
         --build-arg COMMIT_HASH=${CIRCLE_SHA1}
+        --build-arg APP_NAME=${APP_NAME}
       account-url: AWS_ECR_ACCOUNT_URL
       repo: << parameters.repo-name >>
       tag: '${CIRCLE_SHA1}'
