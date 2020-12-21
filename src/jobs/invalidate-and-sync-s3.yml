@@ -6,7 +6,7 @@ docker:
 parameters:
   node-env:
     type: string
-    default: '${NODE_ENV}'
+    default: ${NODE_ENV}
   bucket-name:
     type: string
     default: ''
@@ -18,7 +18,7 @@ parameters:
     default: build
   aws-dist-id:
     type: string
-    default: '${AWS_DIST_ID}'
+    default: ${AWS_DIST_ID}
     description: Cloudfront distribution_id
 
 steps:
