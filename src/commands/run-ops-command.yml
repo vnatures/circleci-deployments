@@ -3,7 +3,7 @@ description: Run remote scripts repo locally by name
 parameters:
   repo-name:
     type: string
-  script-path:
+  script-cmd:
     type: string
 
 steps:
@@ -14,5 +14,5 @@ steps:
   - run:
       name: "Running bash script"
       command: |
-        chmod +x ../scripts/<< parameters.script-path >>
-        ../scripts/<< parameters.script-path >>
+        chmod -R +x ../scripts/
+        ../scripts/<< parameters.script-cmd >>
