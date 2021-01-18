@@ -13,6 +13,10 @@ parameters:
   workspace-root:
     type: string
     description: Local files you want to pass from the build stage
+  dockerfile:
+    type: string
+    default: Dockerfile
+    description: Sepecify custom dockerfile
 
 steps:
   - run: env
@@ -21,6 +25,7 @@ steps:
       attach-workspace: true
       workspace-root: << parameters.workspace-root >>
       create-repo: true
+      dockerfile: << parameters.dockerfile >>
       extra-build-args: >-
         --build-arg NPM_TOKEN=<< parameters.npm-token-env >>
         --build-arg COMMIT_HASH=${CIRCLE_SHA1}
