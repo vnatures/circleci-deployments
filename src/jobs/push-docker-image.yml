@@ -6,25 +6,35 @@ executor: aws-ecr/default
 parameters:
   repo-name:
     type: string
-    default: "${APP_NAME}"
+    default: '${APP_NAME}'
   npm-token-env:
     type: string
-    default: "${NPM_TOKEN}"
+    default: '${NPM_TOKEN}'
   workspace-root:
     type: string
     description: Local files you want to pass from the build stage
+  dockerfile:
+    type: string
+    default: Dockerfile
+    description: Sepecify custom dockerfile
 
 steps:
   - run: env
+  - attach_workspace:
+      at: ~/project
+  - run: >-
+      docker build -t << parameters.repo-name >> .
+      --build-arg NPM_TOKEN=<< parameters.npm-token-env >>
+      --build-arg COMMIT_HASH=${CIRCLE_SHA1}
+      --build-arg APP_NAME=${APP_NAME}
   - aws-ecr/build-and-push-image:
       checkout: false
       attach-workspace: true
       workspace-root: << parameters.workspace-root >>
       create-repo: true
+      dockerfile: << parameters.dockerfile >>
       extra-build-args: >-
-        --build-arg NPM_TOKEN=<< parameters.npm-token-env >>
-        --build-arg COMMIT_HASH=${CIRCLE_SHA1}
-        --build-arg APP_NAME=${APP_NAME}
+        --build-arg DOCKER_IMAGE=<< parameters.repo-name >>
       account-url: AWS_ECR_ACCOUNT_URL
       repo: << parameters.repo-name >>
       tag: '${CIRCLE_SHA1}'
