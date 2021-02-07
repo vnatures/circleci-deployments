@@ -1,8 +1,6 @@
 description: >
   Builds and pushes the docker image to ECR (using the persisted workspace. hence, it's required to run build first).
-
 executor: aws-ecr/default
-
 parameters:
   repo-name:
     type: string
