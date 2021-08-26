@@ -7,13 +7,21 @@ executor: aws-cli/default
 parameters:
   cluster-name:
     type: string
-    default: '${ECS_CLUSTER_NAME}'
+    default: "${ECS_CLUSTER_NAME}"
   node-env:
     type: string
-    default: '${NODE_ENV}'
+    default: "${NODE_ENV}"
+  resource-name-suffix:
+    type: string
+    default: ""
+    description: Custom suffix to add to task-definition family (name) and for the service name in the ECS cluster.
+  extra-env-vars:
+    type: string
+    default: ""
+    description: Additional environment variable configuration added to task-definition use comma (,) delimeter for multiple variables. (Example; ENV_VAR=VALUE,ENV_VAR2=VALUE2)
   resource-name:
     type: string
-    default: '${APP_NAME}'
+    default: "${APP_NAME}"
     description: >
       Defines the next resources: service-name in the cluster, container-name, ecr repo-name and the task-definition name prefix. task-defintion usually named: `{resource-name}-{staging/production}`
 
@@ -22,12 +30,12 @@ steps:
   - aws-cli/setup
   - aws-ecs/update-service:
       cluster-name: << parameters.cluster-name >>
-      family: '<< parameters.resource-name >>-<< parameters.node-env >>'
-      service-name: << parameters.resource-name >>
+      family: "<< parameters.resource-name >>-<< parameters.node-env >><< resource-name-suffix >>"
+      service-name: << parameters.resource-name >><< resource-name-suffix >>
       container-image-name-updates: >
         container=<< parameters.resource-name >>,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/<< parameters.resource-name >>:${CIRCLE_SHA1}
       container-env-var-updates: >
-        container=<< parameters.resource-name >>,name=NODE_ENV,value=<< parameters.node-env >>
+        container=<< parameters.resource-name >>,name=NODE_ENV,value=<< parameters.node-env >>,<< extra-env-vars >>
       verify-revision-is-deployed: true
   - slack/notify:
       event: pass
