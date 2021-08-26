@@ -14,11 +14,13 @@ parameters:
   resource-name-suffix:
     type: string
     default: ""
-    description: Custom suffix to add to task-definition family (name) and for the service name in the ECS cluster.
+    description: >
+      Custom suffix to add to task-definition family (name) and for the service name in the ECS cluster.
   extra-env-vars:
     type: string
     default: ""
-    description: Additional environment variable configuration added to task-definition use comma (,) delimeter for multiple variables. (Example; ENV_VAR=VALUE,ENV_VAR2=VALUE2)
+    description: >
+      Additional environment variable configuration added to task-definition use comma (,) delimeter for multiple variables. (Example; ENV_VAR=VALUE,ENV_VAR2=VALUE2)
   resource-name:
     type: string
     default: "${APP_NAME}"
@@ -30,12 +32,12 @@ steps:
   - aws-cli/setup
   - aws-ecs/update-service:
       cluster-name: << parameters.cluster-name >>
-      family: "<< parameters.resource-name >>-<< parameters.node-env >><< resource-name-suffix >>"
-      service-name: << parameters.resource-name >><< resource-name-suffix >>
+      family: "<< parameters.resource-name >>-<< parameters.node-env >><< parameters.resource-name-suffix >>"
+      service-name: << parameters.resource-name >><< parameters.resource-name-suffix >>
       container-image-name-updates: >
         container=<< parameters.resource-name >>,image-and-tag=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/<< parameters.resource-name >>:${CIRCLE_SHA1}
       container-env-var-updates: >
-        container=<< parameters.resource-name >>,name=NODE_ENV,value=<< parameters.node-env >>,<< extra-env-vars >>
+        container=<< parameters.resource-name >>,name=NODE_ENV,value=<< parameters.node-env >>,<< parameters.extra-env-vars >>
       verify-revision-is-deployed: true
   - slack/notify:
       event: pass
