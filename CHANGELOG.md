@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - deploy-docker-image: add suffix parameter to task-definition name and service
+- deploy-docker-image: add env-variables string parameter to task-definition container's environment variables
 
 ## [1.1.0] - 2021-02-07
 
