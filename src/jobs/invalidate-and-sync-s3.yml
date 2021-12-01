@@ -9,7 +9,7 @@ parameters:
     default: "${NODE_ENV}"
   bucket-name:
     type: string
-    default: ''
+    default: ""
   workspace-root:
     type: string
     description: local files you want to pass from the build stage
@@ -34,3 +34,9 @@ steps:
   - aws-cloudfront/invalidate:
       distribution_id: << parameters.aws-dist-id >>
       paths: "/*"
+  - slack/notify:
+      event: pass
+      template: CUSTOM_SLACK_SUCCESS_TEMPLATE
+  - slack/notify:
+      event: fail
+      template: base_fail_1
