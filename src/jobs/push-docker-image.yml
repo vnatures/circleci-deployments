@@ -22,6 +22,10 @@ parameters:
 
 steps:
   - run: env
+  - when:
+      condition: << parameters.checkout-repo >>
+      steps:
+        - checkout
   - attach_workspace:
       at: ~/project
   - run: >-
@@ -30,7 +34,7 @@ steps:
       --build-arg COMMIT_HASH=${CIRCLE_SHA1}
       --build-arg APP_NAME=${APP_NAME}
   - aws-ecr/build-and-push-image:
-      checkout: << parameters.checkout-repo >>
+      checkout: false
       attach-workspace: true
       workspace-root: << parameters.workspace-root >>
       create-repo: true
