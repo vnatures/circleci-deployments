@@ -1,4 +1,4 @@
-description: TBD
+description: Sync S3 bucket with build directory content, then invalidate the hooked CloudFron distribution
 
 docker:
   - image: circleci/node:12.18.4-browsers
@@ -20,6 +20,12 @@ parameters:
     type: string
     default: "${AWS_DIST_ID}"
     description: Cloudfront distribution_id
+  sync-args:
+    type: string
+    default: |
+      --acl public-read \
+      --cache-control "max-age=86400"
+    description: 'initialize the args by default: --acl public-read --cache-control "max-age=86400"'
 
 steps:
   - checkout
@@ -28,9 +34,7 @@ steps:
   - aws-s3/sync:
       from: << parameters.build-path >>
       to: "s3://<< parameters.bucket-name >>"
-      arguments: |
-        --acl public-read \
-        --cache-control "max-age=86400"
+      arguments: << parameters.sync-args >>
   - aws-cloudfront/invalidate:
       distribution_id: << parameters.aws-dist-id >>
       paths: "/*"
