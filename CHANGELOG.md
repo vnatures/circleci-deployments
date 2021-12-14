@@ -9,6 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Current development changes [ to be moved to release ]
 
+## [1.3.4] - 2020-12-12
+
+### Added
+
+- 1.3.1 invalidate-and-sync-s3: adds optional sync-args params
+
+## [1.3.3] - 2020-12-01
+
+### Added - breaking change (needs to add slack credentials context to the job)
+
+- 1.3.1 invalidate-and-sync-s3: adds slack notify
+- 1.3.2 push-docker-image: adds optional checkout-repo parameter param
+- 1.3.3 push-docker-image: adds checkout step conditionally
+
+## [1.3.0] - 2021-11-18
+
+### Added
+
+- bump slack orb
+- adds custom template for slack success notify
+
 ## [1.2.0] - 2020-08-26
 
 ### Added
