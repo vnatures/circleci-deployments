@@ -41,6 +41,9 @@ steps:
       dockerfile: << parameters.dockerfile >>
       extra-build-args: >-
         --build-arg DOCKER_IMAGE=<< parameters.repo-name >>
+        --build-arg NPM_TOKEN=<< parameters.npm-token-env >>
+        --build-arg COMMIT_HASH=${CIRCLE_SHA1}
+        --build-arg APP_NAME=${APP_NAME}
       account-url: AWS_ECR_ACCOUNT_URL
       repo: << parameters.repo-name >>
       tag: "${CIRCLE_SHA1}"

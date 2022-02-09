@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Current development changes [ to be moved to release ]
 
+## [1.4.1] - 2022-02-07
+
+### Changed
+
+- [BUGFIX] push-docker-image to work with unwrapped dockerfile
+
+## [1.4.0] - 2022-02-06
+
+### Changed
+
+- [BREAKING CHANGES] bump dependencies orbs (aws-cli, aws-ecr, aws-ecs)
+
 ## [1.3.4] - 2020-12-12
 
 ### Added
